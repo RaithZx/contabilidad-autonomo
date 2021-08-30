@@ -1,4 +1,5 @@
 import "./App.css";
+import { tramosIRPF2021 } from "./assets/tramosIRPF.js";
 
 let salarioBrutoAnual = 34000;
 let cuotasSeguridadSocialPagadas = 900;
@@ -6,57 +7,34 @@ let salarioNetoAnual = salarioBrutoAnual - cuotasSeguridadSocialPagadas;
 let minoracionPorGastosSinJustificar = 2000;
 let baseImponibleGeneral = salarioNetoAnual - minoracionPorGastosSinJustificar;
 
-let tramosIRPF2021 = [
-  {
-    from: 0,
-    to: 12450,
-    porcentaje: 19,
-  },
-  {
-    from: 12450,
-    to: 20200,
-    porcentaje: 24,
-  },
-  {
-    from: 20200,
-    to: 35200,
-    porcentaje: 30,
-  },
-  {
-    from: 35200,
-    to: 60000,
-    porcentaje: 37,
-  },
-  {
-    from: 60000,
-    to: 300000,
-    porcentaje: 45,
-  },
-  {
-    from: 300000,
-    to: 0,
-    porcentaje: 45,
-  },
-];
 let restante = baseImponibleGeneral;
 let procesado = 0;
 let llegadoUltimoTramo = false;
+
 tramosIRPF2021.forEach((tramo) => {
   console.log("Procesado:" + procesado);
   console.log("Restante:" + restante);
-  if (!llegadoUltimoTramo) {
-    let baseTramo, sujetoTramo;
 
+  if (!llegadoUltimoTramo) {
+    // cantidad de la que descontar en este tramo
+    let baseTramo;
+    // cantidad porcentuada de la base a descontar (esto es lo que te quitan dentro de este tramo)
+    let sujetoTramo;
+
+    // Averiguar si la baseImponible es mayor o menor que la cantidad maxima de este tramo. Es decir, llenamos el tramo entero o nos quedamos a medias.
     if (tramo.to <= baseImponibleGeneral) {
-      console.log("es suficiente");
+      // Este tramo está por debajo que la base general. Aun quedará por procesar en el siguiente tramo.
+      console.log("el tramo es menor que la base imponible");
       baseTramo = tramo.to;
       sujetoTramo = (baseTramo * tramo.porcentaje) / 100;
     } else {
-      console.log("no es suficiente");
+      // El tramo es más alto que la base general. Por lo tanto no se habra más procesamientos en el siguiente tramo
+      console.log("el tramo es más alto que la base imponible");
       baseTramo = tramo.to - baseImponibleGeneral;
       sujetoTramo = (baseTramo * tramo.porcentaje) / 100;
       llegadoUltimoTramo = true;
     }
+
     restante -= baseImponibleGeneral - baseTramo;
     procesado += baseTramo;
     console.log("BaseTramo: " + baseTramo);
@@ -67,7 +45,9 @@ tramosIRPF2021.forEach((tramo) => {
   console.log("--------");
 });
 
-let procesarTramoIRPF = (tramo, baseImponible) => {
+tramosIRPF2021.forEach((tramo) =)
+
+const procesarTramoIRPF = (tramo, baseImponible) => {
   let llegadoLimiteTramos;
   let baseImponibleTramo = 0;
   if (tramo.to > baseImponible) {
@@ -81,17 +61,20 @@ let procesarTramoIRPF = (tramo, baseImponible) => {
 
   let baseSujetaTramo = baseImponibleTramo - tramo.from;
   let aPagar = (baseSujetaTramo * tramo.porcentaje) / 100;
+
   return {
     aPagar: aPagar,
     baseImponibleTramo: baseImponibleTramo,
     llegadoLimiteTramos: llegadoLimiteTramos,
   };
 };
+
 function App() {
   return (
     <div className="container">
       <h1>Dashboard</h1>
       <section></section>
+      <div><pre>{JSON.stringify(tramosIRPF2021, null, 2) }</pre></div>;
     </div>
   );
 }
